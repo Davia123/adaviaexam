@@ -1,0 +1,36 @@
+version: "3.7"
+services:
+  web:
+    build: .
+    ports:
+      - 80:80
+    container_name: web_server
+    depends_on:
+      - db
+    volumes:
+      - ./www:/var/www/html/
+  db:
+    container_name: database
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_DATABASE: examen
+    volumes:
+       - ./init:/docker-entrypoint-initdb.d
+    ports:
+      - 6033:3306
+  phpmyadmin:
+    container_name: admin_database
+    image: phpmyadmin/phpmyadmin
+    ports:
+     - 8080:80
+    links: 
+      - db:db
+    environment:
+        MYSQL_USER: user
+        MYSQL_PASSWORD: pass
+        MYSQL_ROOT_PASSWORD: pass
